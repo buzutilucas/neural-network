@@ -1,0 +1,29 @@
+************************ Background information ***************************
+
+Neuron(s) input layer.: 4
+Neuron(s) first hidden layer.: 8
+Neuron(s) second hidden layer.: 16
+Neuron(s) third hidden layer.: 4
+Neuron(s) output layer.: 1
+Training time.: 1000000
+Learning rate.: 0.000100
+Momentum.: 1
+Error.: 0.15%
+Attribute Information:
+           	1. sepal length in cm 
+           	2. sepal width in cm 
+           	3. petal length in cm 
+           	4. petal width in cm 
+           	5. Class.:
+           		Iris Setosa --> [0]
+           		Iris Versicolour --> [1]
+           		Iris Virginica --> [-1]
+           	
+***************************************************************************
+*************************** Neural Network Answer *************************
+
+/home/lucasbuzuti/Documentos/Projects/A.I./Neural Network/iris/csv/answer.csv
+
+***************************************************************************
+***************************************************************************
+
