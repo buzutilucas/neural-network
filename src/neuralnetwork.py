@@ -3,7 +3,7 @@
 Created on Mon Jan 05 2018
 Python 3.6
 
-@author: Lucas
+@author: Lucas Buzuti
 """
 import numpy as np
 import pandas as pd
@@ -102,11 +102,11 @@ class NeuralNetworkIris:
         :return: Path
         """
         file_n = os.path.abspath('.')
-        n = file_n.find('src/')
+        n = file_n.find('/src')
         path = file_n[:n]
         try:
-            os.mkdir(path + 'info')
-            os.mkdir(path + 'csv')
+            os.mkdir(path + '/info')
+            os.mkdir(path + '/csv')
         except FileExistsError:
             pass
         finally:
@@ -122,7 +122,8 @@ class NeuralNetworkIris:
         :param w: Data to be written
         :return: None
         """
-        path_name = path + 'csv/' + file_name + '.csv'
+
+        path_name = path + '/csv/' + file_name + '.csv'
         try:
             os.remove(path_name)
         except FileNotFoundError:
@@ -148,9 +149,9 @@ class NeuralNetworkIris:
         df.columns = base.feature_names
         df['Class'] = out_put
         df['Answer'] = self.synapse[self.opl]
-        df.to_csv(p + 'csv/answer.csv')
+        df.to_csv(p + '/csv/answer.csv')
 
-        fileInfo = 'info/NeuralNetworkInformation'
+        fileInfo = '/info/NeuralNetworkInformation'
         file = open(p + fileInfo, 'wt')
         file.write('************************ Background information ***************************\n\n')
         file.write('Neuron(s) input layer.: %d\n' % len(input_data.T))
@@ -174,7 +175,7 @@ class NeuralNetworkIris:
            	""")
         file.write('\n***************************************************************************\n')
         file.write('*************************** Neural Network Answer *************************\n\n')
-        file.write(p + 'csv/answer.csv')
+        file.write(p + '/csv/answer.csv')
         file.write('\n\n***************************************************************************\n')
         file.write('***************************************************************************\n\n')
 
@@ -212,22 +213,15 @@ class NeuralNetworkIris:
                      3: len(output.T)}
 
         self.synapse = {0: inputData}
-        count = 0
+        count = 1
         trainingTime = self.training_time
 
         while trainingTime > 0 and self.err >= self.Err:
             # Layers synapses calculation
-            dctIL = {0: inputData}
             for k in range(neuronDct.__len__()):
-                biasXWeight = np.empty([len(dctIL[k]), neuronDct[k]], dtype=float)
-                aux = k + 1
-                dctIL.setdefault(aux, biasXWeight)
-                biasA = np.array(np.dot(bias, dctB[k]))
-                for i in range(len(dctIL[0])):
-                    for j in range(neuronDct[k]):
-                        biasXWeight[i][j] = biasA[j]
-                addSynapse = np.dot(self.synapse[k], dctW[k]) + biasXWeight
+                addSynapse = np.dot(self.synapse[k], dctW[k]) + dctB[k]
                 hiddenLayer = self.hyperbolic(addSynapse)
+                aux = k + 1
                 self.synapse[aux] = hiddenLayer
                 self.opl = aux
 
@@ -251,14 +245,8 @@ class NeuralNetworkIris:
             auxK = dctB.__len__()
             for k in range(dctDelta.__len__()):
                 auxK -= 1
-                weightsListBias = []
-                add = 0
-                deltaT = dctDelta[k].T
-                for i in range(len(deltaT)):
-                    for j in range(len(dctDelta[k])):
-                        add += deltaT[i][j]
-                    weightsListBias.append(add)
-                biasXdelta = np.array(weightsListBias)
+                bias_ones = np.ones((1, len(dctDelta[k])))
+                biasXdelta = bias_ones.dot(dctDelta[k])
                 dctB[auxK] = (dctB[auxK] * self.momentum) + (biasXdelta * self.learning_rate)  # Backpropagation
 
             # Weights update
@@ -298,23 +286,22 @@ class NeuralNetworkIris:
         p = self.locate_path()
 
         # Weights
-        dctW = {0: np.loadtxt(os.path.join(p + 'csv/weights0.csv'), delimiter=','),
-                1: np.loadtxt(os.path.join(p + 'csv/weights1.csv'), delimiter=','),
-                2: np.loadtxt(os.path.join(p + 'csv/weights2.csv'), delimiter=','),
-                3: np.loadtxt(os.path.join(p + 'csv/weights3.csv'), delimiter=',')}
+        dctW = {0: np.loadtxt(os.path.join(p + '/csv/weights0.csv'), delimiter=','),
+                1: np.loadtxt(os.path.join(p + '/csv/weights1.csv'), delimiter=','),
+                2: np.loadtxt(os.path.join(p + '/csv/weights2.csv'), delimiter=','),
+                3: np.loadtxt(os.path.join(p + '/csv/weights3.csv'), delimiter=',')}
 
         # Bias
         bias = np.array([1])
-        dctB = {0: np.array([np.loadtxt(os.path.join(p + 'csv/weights_bias0.csv'), delimiter=',')]),
-                1: np.array([np.loadtxt(os.path.join(p + 'csv/weights_bias1.csv'), delimiter=',')]),
-                2: np.array([np.loadtxt(os.path.join(p + 'csv/weights_bias2.csv'), delimiter=',')]),
-                3: np.array([np.loadtxt(os.path.join(p + 'csv/weights_bias3.csv'), delimiter=',')])}
+        dctB = {0: np.array([np.loadtxt(os.path.join(p + '/csv/weights_bias0.csv'), delimiter=',')]),
+                1: np.array([np.loadtxt(os.path.join(p + '/csv/weights_bias1.csv'), delimiter=',')]),
+                2: np.array([np.loadtxt(os.path.join(p + '/csv/weights_bias2.csv'), delimiter=',')]),
+                3: np.array([np.loadtxt(os.path.join(p + '/csv/weights_bias3.csv'), delimiter=',')])}
 
         layers = {0: np.array(input_data)}
         index_output = 0
         for k in range(dctW.__len__()):
-            biasA = np.array(np.dot(bias, dctB[k]))
-            addSynapse = np.dot(layers[k], dctW[k]) + biasA
+            addSynapse = np.dot(layers[k], dctW[k]) + dctB[k]
             hiddenLayer = self.hyperbolic(addSynapse)
             layers[k + 1] = hiddenLayer
             index_output += 1
