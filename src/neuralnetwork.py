@@ -101,10 +101,7 @@ class NeuralNetworkIris:
         Locate the path desired.
         :return: Path
         """
-        dirlist = os.listdir(".")
-        file_n = ''
-        for i in dirlist:
-            file_n = os.path.abspath(i)
+        file_n = os.path.abspath('.')
         n = file_n.find('src/')
         path = file_n[:n]
         try:
@@ -125,7 +122,6 @@ class NeuralNetworkIris:
         :param w: Data to be written
         :return: None
         """
-
         path_name = path + 'csv/' + file_name + '.csv'
         try:
             os.remove(path_name)
